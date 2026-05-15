@@ -11,7 +11,7 @@ const $$ = (selector: string): any[] => Array.from(document.querySelectorAll(sel
 async function login(event: SubmitEvent) {
   event.preventDefault();
   const loginMessage = $('#loginMessage');
-  setMessage(loginMessage, 'Validando credenciales en Core...');
+  setMessage(loginMessage, 'Validando credenciales...');
 
   const form = new FormData(event.currentTarget as HTMLFormElement);
 
@@ -20,7 +20,7 @@ async function login(event: SubmitEvent) {
 
     const realType = session.customerType;
     if (!realType) {
-      throw new Error('Core no devolvio el tipo de cliente. Reinicia el servicio Core para cargar los cambios.');
+      throw new Error('No se pudo identificar el tipo de cliente. Intenta nuevamente en unos minutos.');
     }
 
     setState({ session, customerType: realType });
@@ -40,7 +40,7 @@ function showDashboard() {
   const state = getState();
   const isCompany = state.customerType === 'JURIDICO';
   $('#sessionType').textContent = isCompany ? 'Cliente juridico' : 'Cliente natural';
-  $('#sessionName').textContent = state.session?.customerName || state.session?.username || 'Dashboard';
+  $('#sessionName').textContent = state.session?.customerName || state.session?.username || 'Panel principal';
   $('#sessionMeta').textContent = `${state.session?.identificationType || 'ID'} ${state.session?.identification || ''}`.trim();
   $('#sidebarType').textContent = isCompany ? 'Perfil juridico' : 'Perfil natural';
 

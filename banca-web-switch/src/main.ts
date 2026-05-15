@@ -15,6 +15,8 @@ async function checkServicesStatus() {
   const { coreUserId, coreStatus } = await checkServices();
   setState({ coreUserId });
   $('#coreStatus').textContent = coreStatus;
+  const portalCoreStatus = $('#portalCoreStatus');
+  if (portalCoreStatus) portalCoreStatus.textContent = coreStatus;
 
   const switchStatus = await checkSwitchService();
   $('#switchStatus').textContent = switchStatus;
@@ -41,6 +43,10 @@ function bindEvents() {
 
   $$('.nav-item').forEach((button: any) => {
     button.addEventListener('click', () => activateSection(button.dataset.section));
+  });
+
+  $$('[data-section-shortcut]').forEach((button: any) => {
+    button.addEventListener('click', () => activateSection(button.dataset.sectionShortcut));
   });
 
   document.addEventListener('click', (event: any) => {

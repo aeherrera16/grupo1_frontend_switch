@@ -32,19 +32,19 @@ async function download(path: string, fileName: string) {
 
 async function checkServices() {
   try {
-    const data = await api('/api/core/core/v1/auth/test-data');
-    return { coreUserId: data.coreUserId || 1, coreStatus: 'Core conectado', switchStatus: null };
+    await api('/api/core/actuator/health');
+    return { coreUserId: 1, coreStatus: 'Banca disponible', switchStatus: null };
   } catch (error) {
-    return { coreUserId: 1, coreStatus: 'Core sin conexion', switchStatus: null };
+    return { coreUserId: 1, coreStatus: 'Banca no disponible', switchStatus: null };
   }
 }
 
 async function checkSwitchService() {
   try {
-    await api('/api/switch/api/switch/health');
-    return 'Switch conectado';
+    await api('/api/switch/switch/v1/switch/health');
+    return 'Pagos disponibles';
   } catch (error) {
-    return 'Switch sin conexion';
+    return 'Pagos no disponibles';
   }
 }
 
@@ -69,16 +69,16 @@ async function loadTransactions(customerId: string, coreUserId: number) {
 }
 
 async function loadBatches() {
-  return api('/api/switch/api/payment-batch');
+  return api('/api/switch/switch/v1/payment-batch');
 }
 
 async function loadCharges() {
-  const response = await api('/api/switch/api/billing/charges');
+  const response = await api('/api/switch/switch/v1/billing/charges');
   return response.cargos || [];
 }
 
 async function loadCompanyAccount() {
-  const response = await api('/api/switch/api/billing/empresa-account');
+  const response = await api('/api/switch/switch/v1/billing/empresa-account');
   return response.cuentaEmpresa || null;
 }
 
@@ -87,23 +87,23 @@ async function uploadCsv(file: File) {
   form.append('file', file);
   form.append('channel', 'WEB');
 
-  return api('/api/switch/api/payment-batch/upload-csv', {
+  return api('/api/switch/switch/v1/payment-batch/upload-csv', {
     method: 'POST',
     body: form,
   });
 }
 
 async function processBatch(batchId: string) {
-  return api(`/api/switch/api/payment-processor/process/${batchId}`, { method: 'POST' });
+  return api(`/api/switch/switch/v1/payment-batch/${batchId}/process`, { method: 'POST' });
 }
 
 async function runReport(type: string, batchId: string) {
   const endpoints: any = {
-    summary: `/api/switch/api/billing/batches/${batchId}/summary`,
-    detail: `/api/switch/api/billing/batches/${batchId}/detail`,
-    history: `/api/switch/api/billing/batches/${batchId}/history`,
-    charge: `/api/switch/api/billing/batches/${batchId}/charge`,
-    receipt: `/api/switch/api/billing/batches/${batchId}/receipt`,
+    summary: `/api/switch/switch/v1/billing/batches/${batchId}/summary`,
+    detail: `/api/switch/switch/v1/billing/batches/${batchId}/detail`,
+    history: `/api/switch/switch/v1/billing/batches/${batchId}/history`,
+    charge: `/api/switch/switch/v1/billing/batches/${batchId}/charge`,
+    receipt: `/api/switch/switch/v1/billing/batches/${batchId}/receipt`,
   };
 
   return api(endpoints[type]);
@@ -111,8 +111,8 @@ async function runReport(type: string, batchId: string) {
 
 async function runDownload(type: string, batchId: string) {
   const endpoints: any = {
-    'receipt-pdf': `/api/switch/api/payment-batch/${batchId}/receipt`,
-    'billing-novelties': `/api/switch/api/billing/batches/${batchId}/novelties`,
+    'receipt-pdf': `/api/switch/switch/v1/payment-batch/${batchId}/receipt`,
+    'billing-novelties': `/api/switch/switch/v1/billing/batches/${batchId}/novelties`,
   };
   const fileNames: any = {
     'receipt-pdf': `recibo_lote_${batchId}.pdf`,

@@ -66,7 +66,7 @@ function renderTransactions() {
   `;
 
   table.innerHTML = markup;
-  recent.innerHTML = markup;
+  recent.innerHTML = `<div class="table-wrap compact-table">${markup}</div>`;
 }
 
 function shortId(value: any) {

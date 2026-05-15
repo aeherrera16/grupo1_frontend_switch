@@ -108,7 +108,7 @@ function renderBatches() {
   `;
 
   table.innerHTML = markup;
-  recent.innerHTML = markup;
+  recent.innerHTML = `<div class="table-wrap compact-table">${markup}</div>`;
 }
 
 async function uploadCsvHandler(event: SubmitEvent) {
@@ -127,7 +127,7 @@ async function uploadCsvHandler(event: SubmitEvent) {
     return;
   }
 
-  setMessage(uploadMessage, 'Enviando archivo al Switch...');
+  setMessage(uploadMessage, 'Procesando archivo de pagos...');
   try {
     const response = await uploadCsv(file);
     setMessage(uploadMessage, `Resultado: ${response.validationResult || 'procesado'} | Estado: ${response.batchStatus || 'N/D'}`, 'success');
