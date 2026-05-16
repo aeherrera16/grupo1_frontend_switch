@@ -84,10 +84,10 @@ function serveStatic(req, res) {
 }
 
 function mapProxyTarget(req) {
-  if (req.url.startsWith("/api/core/")) {
+  if (req.url.startsWith("/api/core/v1")) {
     return {
       baseUrl: CORE_BASE_URL,
-      path: req.url.replace("/api/core", "")
+      path: req.url.replace("/api/core/v1", "")
     };
   }
 

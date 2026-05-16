@@ -32,7 +32,7 @@ async function download(path: string, fileName: string) {
 
 async function checkServices() {
   try {
-    await api('/api/core/actuator/health');
+    await api('http://localhost:8080/health');
     return { coreUserId: 1, coreStatus: 'Banca disponible', switchStatus: null };
   } catch (error) {
     return { coreUserId: 1, coreStatus: 'Banca no disponible', switchStatus: null };
@@ -49,7 +49,7 @@ async function checkSwitchService() {
 }
 
 async function login(username: string, password: string) {
-  return api('/api/core/core/v1/auth/customers/login', {
+  return api('http://localhost:8080/core/v1/auth/customers/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
@@ -57,13 +57,13 @@ async function login(username: string, password: string) {
 }
 
 async function loadAccounts(customerId: string, coreUserId: number) {
-  return api(`/api/core/core/v1/accounts/customer/${customerId}`, {
+  return api(`/core/v1/accounts/customer/${customerId}`, {
     headers: { 'X-Core-User-Id': String(coreUserId || 1) },
   });
 }
 
 async function loadTransactions(customerId: string, coreUserId: number) {
-  return api(`/api/core/core/v1/accounts/customer/${customerId}/transactions`, {
+  return api(`/core/v1/accounts/customer/${customerId}/transactions`, {
     headers: { 'X-Core-User-Id': String(coreUserId || 1) },
   });
 }
@@ -85,7 +85,7 @@ async function loadCompanyAccount() {
 async function uploadCsv(file: File) {
   const form = new FormData();
   form.append('file', file);
-  form.append('channel', 'WEB');
+  form.append('channel', 'PORTAL');
 
   return api('/api/switch/switch/v1/payment-batch/upload-csv', {
     method: 'POST',

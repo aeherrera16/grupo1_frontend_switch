@@ -84,7 +84,7 @@ function renderBatches() {
         <td>${escapeHtml(batch.headerTotalRecords || 0)}</td>
         <td>${formatMoney(batch.headerTotalAmount)}</td>
         <td>${formatDate(batch.receivedAt)}</td>
-        <td><button class="secondary-button" data-process="${escapeHtml(batch.id)}" type="button">Procesar</button></td>
+        
       </tr>
     `)
     .join('');
@@ -100,7 +100,6 @@ function renderBatches() {
           <th>Registros</th>
           <th>Monto</th>
           <th>Recibido</th>
-          <th>Accion</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
