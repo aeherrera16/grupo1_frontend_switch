@@ -79,7 +79,10 @@ async function loadTransactions(customerId: string, coreUserId: number) {
 }
 
 async function loadBatches() {
-  return api('/api/switch/v1/payment-batch');
+  const state = getState();
+  const ruc = state.session?.identification;
+  const url = ruc ? `/api/switch/v1/payment-batch?ruc=${encodeURIComponent(ruc)}` : '/api/switch/v1/payment-batch';
+  return api(url);
 }
 
 async function loadCharges() {
@@ -96,6 +99,12 @@ async function uploadCsv(file: File) {
   const form = new FormData();
   form.append('file', file);
   form.append('channel', 'PORTAL');
+
+  const state = getState();
+  const session = state.session;
+  if (session && session.identification) {
+    form.append('ruc', session.identification);
+  }
 
   return api('/api/switch/v1/payment-batch/upload-csv', {
     method: 'POST',
