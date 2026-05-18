@@ -1,6 +1,7 @@
 import { loadBatches as loadBatchesApi, loadCharges as loadChargesApi, loadCompanyAccount as loadCompanyAccountApi, uploadCsv, processBatch } from '../services/api';
 import { getState, setState } from '../hooks/useState';
-import { formatMoney, statusClass, escapeHtml, setMessage, compactAccount, formatDate } from '../utils/formatters';
+import { formatMoney, statusClass, escapeHtml, setMessage, compactAccount, formatDate } from '../helpers/formatters';
+import { syncReportBatchOptions } from './ReportsPage';
 
 const $ = (selector: string): any => document.querySelector(selector);
 
@@ -16,13 +17,18 @@ async function loadBatches() {
 
   try {
     const batches = await loadBatchesApi();
-    setState({ batches });
+    setState({ batches, paymentBatches: batches });
   } catch (error: any) {
-    setState({ batches: [] });
+    setState({ batches: [], paymentBatches: [] });
     $('#batchesTable').innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`;
   }
 
   renderBatches();
+
+  const table = document.getElementById('batchesTable');
+  if (table) {
+    table.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 async function loadCharges() {
@@ -35,7 +41,8 @@ async function loadCharges() {
   } catch (error) {
     setState({ charges: [] });
   }
-  $('#chargesMetric').textContent = getState().charges.length;
+  const chargesMetric = $('#chargesMetric');
+  if (chargesMetric) chargesMetric.textContent = getState().charges.length;
 }
 
 async function loadCompanyAccount() {
@@ -55,25 +62,31 @@ async function loadCompanyAccount() {
   }
 
   const value = compactAccount(getState().companyAccount);
-  $('#companyAccountMetric').textContent = value;
+  const companyAccountMetric = $('#companyAccountMetric');
+  if (companyAccountMetric) companyAccountMetric.textContent = value;
   $('#companyAccountHero').textContent = value;
 }
 
 function renderBatches() {
   const state = getState();
-  $('#batchesMetric').textContent = state.batches.length;
+  const batchesMetric = $('#batchesMetric');
+  const paymentBatches = state.paymentBatches || [];
+  if (batchesMetric) batchesMetric.textContent = paymentBatches.length;
   const table = $('#batchesTable');
   const recent = $('#recentBatches');
 
-  if (!state.batches.length) {
+  if (!paymentBatches.length) {
     const empty = '<div class="empty-state">Sin lotes cargados todavia.</div>';
     table.innerHTML = empty;
-    recent.innerHTML = empty;
+    if (recent) recent.innerHTML = empty;
     return;
   }
 
-  const rows = state.batches
+  const companyRuc = state.session?.identification;
+  const rows = paymentBatches
     .slice()
+    .filter((batch: any) => !batch.channel || !(batch.channel + '').toLowerCase().includes('sftp'))
+    .filter((batch: any) => !companyRuc || batch.ruc === companyRuc)
     .sort((a: any, b: any) => (b.id || 0) - (a.id || 0))
     .map((batch: any) => `
       <tr>
@@ -84,7 +97,7 @@ function renderBatches() {
         <td>${escapeHtml(batch.headerTotalRecords || 0)}</td>
         <td>${formatMoney(batch.headerTotalAmount)}</td>
         <td>${formatDate(batch.receivedAt)}</td>
-        
+
       </tr>
     `)
     .join('');
@@ -107,7 +120,8 @@ function renderBatches() {
   `;
 
   table.innerHTML = markup;
-  recent.innerHTML = `<div class="table-wrap compact-table">${markup}</div>`;
+  if (recent) recent.innerHTML = `<div class="table-wrap compact-table">${markup}</div>`;
+  syncReportBatchOptions();
 }
 
 async function uploadCsvHandler(event: SubmitEvent) {

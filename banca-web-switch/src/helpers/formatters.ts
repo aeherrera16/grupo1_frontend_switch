@@ -21,7 +21,7 @@ function statusClass(value: any) {
   if (['ACTIVO', 'COMPLETADA', 'SUCCESS', 'PROCESADO', 'APROBADO'].some((item) => normalized.includes(item))) {
     return 'is-success';
   }
-  if (['ERROR', 'RECHAZ', 'FALL', 'BLOQUEADO', 'INACTIVO'].some((item) => normalized.includes(item))) {
+  if (['ERROR', 'RECHAZ', 'REJECT', 'FALL', 'BLOQUEADO', 'INACTIVO'].some((item) => normalized.includes(item))) {
     return 'is-danger';
   }
   return 'is-neutral';

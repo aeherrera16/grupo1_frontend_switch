@@ -1,6 +1,6 @@
 import { loadTransactions as loadTransactionsApi } from '../services/api';
 import { getState, setState } from '../hooks/useState';
-import { formatMoney, statusClass, movementClass, escapeHtml, formatDate } from '../utils/formatters';
+import { formatMoney, statusClass, movementClass, escapeHtml, formatDate } from '../helpers/formatters';
 
 const $ = (selector: string): any => document.querySelector(selector);
 
@@ -21,13 +21,14 @@ async function loadTransactions() {
 
 function renderTransactions() {
   const state = getState();
-  $('#transactionsMetric').textContent = state.transactions.length;
+  const metric = $('#transactionsMetric');
+  if (metric) metric.textContent = state.transactions.length;
   const recent = $('#recentTransactions');
   const table = $('#transactionsTable');
 
   if (!state.transactions.length) {
     const empty = '<div class="empty-state">Sin transacciones registradas.</div>';
-    recent.innerHTML = empty;
+    if (recent) recent.innerHTML = empty;
     table.innerHTML = empty;
     return;
   }
@@ -66,7 +67,7 @@ function renderTransactions() {
   `;
 
   table.innerHTML = markup;
-  recent.innerHTML = `<div class="table-wrap compact-table">${markup}</div>`;
+  if (recent) recent.innerHTML = `<div class="table-wrap compact-table">${markup}</div>`;
 }
 
 function shortId(value: any) {
