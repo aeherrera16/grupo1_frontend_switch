@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BanQuito Banca Web</title>
-    <script type="module" crossorigin src="/assets/index-WkZhjPaH.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-B0eFwhpK.css">
+    <script type="module" crossorigin src="/assets/index-FQ4pTBF4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-yvAEeFn8.css">
   </head>
   <body>
     <main id="app" class="app-shell">
@@ -208,6 +208,18 @@
               <div class="panel-heading">
                 <h2>Transacciones realizadas</h2>
                 <span>Historial de movimientos</span>
+              </div>
+              <div class="date-filter-bar">
+                <label>
+                  Desde
+                  <input id="transactionsFromDate" type="date" />
+                </label>
+                <label>
+                  Hasta
+                  <input id="transactionsToDate" type="date" />
+                </label>
+                <button id="applyTransactionsFilterButton" class="secondary-button" type="button">Filtrar</button>
+                <button id="clearTransactionsFilterButton" class="secondary-button" type="button">Limpiar</button>
               </div>
               <div id="transactionsTable" class="table-wrap"></div>
             </div>
