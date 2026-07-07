@@ -236,6 +236,17 @@
               </label>
               <button class="primary-button fit-button" type="submit">Procesar archivo</button>
               <p id="uploadMessage" class="message" role="status"></p>
+
+              <div id="uploadProgressPanel" class="upload-progress is-hidden">
+                <div class="progress-header">
+                  <span>Tiempo transcurrido: <strong id="uploadTimer">00:00</strong></span>
+                  <span id="uploadCounts">0 / 0 procesadas</span>
+                </div>
+                <div class="progress-bar-track">
+                  <div id="uploadProgressBar" class="progress-bar-fill" style="width:0%"></div>
+                </div>
+                <div id="uploadLiveRows" class="table-wrap compact-table"></div>
+              </div>
             </form>
 
             <div class="table-panel">
